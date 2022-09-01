@@ -37,11 +37,11 @@ void next_token() {
     else if (IS_NUMERIC(token)) {
       current->type = kNumber;
       int64_t *token_value = (int64_t *) malloc(sizeof(int64_t));
-      (*token_value) = (token - '0');
+      *token_value = (token - '0');
       // Decimal values start with a value between 1 and 9 inclusive.
       if ((*token_value) > 0) {
         while (IS_BETWEEN(*source, '1', '9')) {
-          (*token_value) = (((*token_value) * 10) + ((*source)++ - '0'));
+          *token_value = (((*token_value) * 10) + ((*source)++ - '0'));
         }
       }
       // Binary, Hexadecimal and Octal start with '0'.
@@ -58,7 +58,7 @@ void next_token() {
               || IS_BETWEEN(token, 'a', 'f')
               || IS_BETWEEN(token, 'A', 'F')
           ) {
-            (*token_value) = (
+            *token_value = (
               ((*token_value) * 16)
               + (token & 15)
               + (token >= 'A' ? 9 : 0)
@@ -69,7 +69,7 @@ void next_token() {
         // Octal
         else {
           while ((*source >= '0') && (*source <= '7')) {
-            (*token_value) = (((*token_value) * 8) + (*source - '0'));
+            *token_value = (((*token_value) * 8) + (*source - '0'));
           }
         }
       }
@@ -77,23 +77,25 @@ void next_token() {
       tokens[t_count++] = current;
       return;
     }
-    char *token_value = (char *) calloc(4096, sizeof(char));
+    char *token_value;
     switch (token) {
-
+      case '\'':
+      case '"':
+        return;  // TODO: Implement string literals and chars.
       case '/':
         if (*source == '/') {
+          token_value = (char *) calloc(4096, sizeof(char));
           current->type = kSingleComment;
           source += 1;
-
+          // Skip initial whitespaces and forward slashes.
           while (*source == '/' || *source == ' ')
             source += 1;
-
           while ((*source != '\n') && (*source != '\0'))
             token_value[index++] = *source++;
         }
         else if (*source == '*') {
+          token_value = (char *) calloc(4096, sizeof(char));
           current->type = kMultiComment;
-
           while (
               (*source != '\0')
               && (!((*source == '*') && (*(source + 1) == '/')))
@@ -104,9 +106,10 @@ void next_token() {
           source += 1;
         }
         else {
+          token_value = NULL;
           current->type = kDivide;
         }
-        realloc(token_value, strlen(token_value));
+        realloc(token_value, index);
         current->value = token_value;
         tokens[t_count++] = current;
         return;
@@ -152,6 +155,9 @@ void next_token() {
         if (*source == '=') {
           source += 1;
           current->type = kNotEqual;
+        }
+        else {
+          current->type = kLogicalNOT;
         }
         tokens[t_count++] = current;
         return;
