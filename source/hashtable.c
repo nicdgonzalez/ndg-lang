@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-static uint64_t hash(struct HashTable *ht, const char *_key) {
+static uint64_t _hash(struct HashTable *ht, const char *_key) {
   uint64_t hash = 1;
   for (uint8_t *key = (uint8_t *) _key; *key; key++) {
     hash *= 163;
@@ -13,7 +13,7 @@ static uint64_t hash(struct HashTable *ht, const char *_key) {
   return (hash %= ht->capacity);
 }
 
-static bool is_prime(int64_t _value) {
+static bool _is_prime(int64_t _value) {
   if ((_value == 0) || (_value == 1))
     return false;
 
@@ -24,18 +24,18 @@ static bool is_prime(int64_t _value) {
   return true;
 }
 
-static int64_t get_prime(int64_t _value) {
+static int64_t _get_prime(int64_t _value) {
   if ((_value % 2) == 0)
     _value++;
 
-  while (!(is_prime(_value)))
+  while (!(_is_prime(_value)))
     _value += 2;
 
   return _value;
 }
 
 static void _hashtable_init(struct HashTable *ht, uint64_t _capacity) {
-  ht->capacity = get_prime(_capacity);
+  ht->capacity = _get_prime(_capacity);
   ht->count = 0;
   ht->table = (struct Bucket *) calloc(ht->capacity, sizeof(struct Bucket));
 
@@ -54,7 +54,7 @@ void hashtable_init(struct HashTable *ht) {
 }
 
 void hashtable_insert(struct HashTable *ht, const char *_key, void *_value) {
-  uint64_t index = hash(ht, _key);
+  uint64_t index = _hash(ht, _key);
   struct Bucket bucket = ht->table[index];
 
   // There is already an entry at this index location.
@@ -110,7 +110,7 @@ void hashtable_insert(struct HashTable *ht, const char *_key, void *_value) {
 }
 
 void * hashtable_search(struct HashTable *ht, const char *_key) {
-  uint64_t index = hash(ht, _key);
+  uint64_t index = _hash(ht, _key);
   struct Bucket bucket = ht->table[index];
 
   if (bucket.key == _key)
@@ -126,7 +126,7 @@ void * hashtable_search(struct HashTable *ht, const char *_key) {
 }
 
 void hashtable_remove(struct HashTable *ht, const char *_key) {
-  uint64_t index = hash(ht, _key);
+  uint64_t index = _hash(ht, _key);
   struct Bucket bucket = ht->table[index];
 
   while (bucket.next != NULL) {
