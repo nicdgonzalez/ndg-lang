@@ -1,0 +1,10 @@
+# .gitignore file
+
+# Visual Studio Code
+.vscode
+
+# Executables
+*.exe
+
+# CMake
+build/*
