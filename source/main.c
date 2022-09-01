@@ -35,7 +35,7 @@ int32_t main(int32_t argc, char **argv) {
       (struct TokenInfo **)
       calloc(pool_size, sizeof(struct TokenInfo))
   ))) {
-    printf("Failed to allocate enough memory for the source code.\n");
+    printf("Failed to allocate enough memory for the token array.\n");
     exit(EXIT_FAILURE);
   }
 
