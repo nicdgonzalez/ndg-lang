@@ -11,7 +11,7 @@
 extern char *source;
 extern char token;
 extern struct TokenInfo **tokens;
-extern uint64_t t_count;
+extern uint64_t token_count;
 
 int32_t main(int32_t argc, char **argv) {
   if (argc < 2) {
@@ -55,7 +55,7 @@ int32_t main(int32_t argc, char **argv) {
     next_token();
   }
 
-  for (int i = 0; i < t_count; i++) {
+  for (int i = 0; i < token_count; i++) {
     printf("Token Type: '%d'\n", tokens[i]->type);
     printf("Token Name: '%s'\n", tokens[i]->name);
     if (tokens[i]->type == kNumber)
