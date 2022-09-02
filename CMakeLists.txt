@@ -11,3 +11,10 @@ add_executable(ndglang
   "source/lexer.c"
   "source/hashtable.c"
 )
+
+add_compile_options(ndglang
+  -Wall
+  -Werror
+  -Wpedantic
+  -std=c99
+)
