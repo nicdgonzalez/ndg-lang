@@ -49,7 +49,7 @@ Where an increment in:
 Getting Started
 ----------------
 
-ごめんなさい。
+申し訳ございません。
 
 
 Contributing
